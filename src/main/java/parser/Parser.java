@@ -9,14 +9,14 @@ import java.util.Stack;
 import Log.Log;
 import codeGenerator.CodeGeneratorFacade;
 import errorHandler.ErrorHandler;
-import scanner.lexicalAnalyzer;
+import scanner.LexicalAnalyzerFacade;
 import scanner.token.Token;
 
 public class Parser {
     private ArrayList<Rule> rules;
     private Stack<Integer> parsStack;
     private ParseTable parseTable;
-    private lexicalAnalyzer lexicalAnalyzer;
+    private LexicalAnalyzerFacade lexicalAnalyzer;
     private CodeGeneratorFacade cg;
 
     public Parser() {
@@ -39,7 +39,7 @@ public class Parser {
     }
 
     public void startParse(java.util.Scanner sc) {
-        lexicalAnalyzer = new lexicalAnalyzer(sc);
+        lexicalAnalyzer = new LexicalAnalyzerFacade(sc);
         Token lookAhead = lexicalAnalyzer.getNextToken();
         boolean finish = false;
         Action currentAction;
