@@ -19,12 +19,21 @@ public class Address {
     }
 
     public Address(int num, varType varType) {
-        this.num = num;
+        setNum(num);
         this.Type = new Direct();
         this.varType = varType;
     }
 
     public String toString() {
-        return Type.toString(this.num);
+        return Type.toString(getNum());
+    }
+
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
     }
 }
