@@ -190,20 +190,22 @@ public class CodeGenerator {
         symbolStack.push(next.value);
     }
 
+    private varType getVarType(Symbol s) {
+        switch (s.type) {
+            case Bool:
+                return varType.Bool;
+            case Int:
+                return varType.Int;
+        }
+        return varType.Int;
+    }
+
     public void fpid() {
         ss.pop();
         ss.pop();
 
         Symbol s = symbolTable.get(symbolStack.pop(), symbolStack.pop());
-        varType t = varType.Int;
-        switch (s.type) {
-            case Bool:
-                t = varType.Bool;
-                break;
-            case Int:
-                t = varType.Int;
-                break;
-        }
+        varType t = getVarType(s);
         ss.push(new Address(s.address, t));
 
     }
