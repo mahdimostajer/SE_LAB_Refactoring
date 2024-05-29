@@ -167,7 +167,7 @@ public class CodeGenerator {
             try {
 
                 Symbol s = symbolTable.get(className, methodName, next.value);
-                varType t = getVarType(s);
+                varType t = getVarType(s.type);
                 ss.push(new Address(s.address, t));
 
 
@@ -182,8 +182,8 @@ public class CodeGenerator {
         symbolStack.push(next.value);
     }
 
-    private varType getVarType(Symbol s) {
-        switch (s.type) {
+    private varType getVarType(SymbolType s) {
+        switch (s) {
             case Bool:
                 return varType.Bool;
             case Int:
@@ -197,7 +197,7 @@ public class CodeGenerator {
         ss.pop();
 
         Symbol s = symbolTable.get(symbolStack.pop(), symbolStack.pop());
-        varType t = getVarType(s);
+        varType t = getVarType(s.type);
         ss.push(new Address(s.address, t));
 
     }
@@ -232,15 +232,8 @@ public class CodeGenerator {
             ErrorHandler.printError("The few argument pass for method");
         } catch (IndexOutOfBoundsException e) {
         }
-        varType t = varType.Int;
-        switch (symbolTable.getMethodReturnType(className, methodName)) {
-            case Int:
-                t = varType.Int;
-                break;
-            case Bool:
-                t = varType.Bool;
-                break;
-        }
+        varType t = getVarType(symbolTable.getMethodReturnType(className, methodName));
+
         Address temp = new Address(memory.getTemp(), t);
         ss.push(temp);
         memory.add3AddressCode(Operation.ASSIGN, new Address(temp.num, varType.Address, new Imidiate()), new Address(symbolTable.getMethodReturnAddress(className, methodName), varType.Address), null);
@@ -257,15 +250,8 @@ public class CodeGenerator {
 //        String className = symbolStack.pop();
         try {
             Symbol s = symbolTable.getNextParam(callStack.peek(), methodName);
-            varType t = varType.Int;
-            switch (s.type) {
-                case Bool:
-                    t = varType.Bool;
-                    break;
-                case Int:
-                    t = varType.Int;
-                    break;
-            }
+            varType t = getVarType(s.type);
+            
             Address param = ss.pop();
             if (param.varType != t) {
                 ErrorHandler.printError("The argument type isn't match");
