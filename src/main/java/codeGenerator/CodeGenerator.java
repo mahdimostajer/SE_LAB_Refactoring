@@ -10,6 +10,8 @@ import semantic.symbol.Symbol;
 import semantic.symbol.SymbolTable;
 import semantic.symbol.SymbolType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -283,35 +285,34 @@ public class CodeGenerator {
 
     public void add() {
         Address temp = new Address(memory.getTemp(), varType.Int);
-        Address s2 = ss.pop();
-        Address s1 = ss.pop();
-
-        if (s1.varType != varType.Int || s2.varType != varType.Int) {
-            ErrorHandler.printError("In add two operands must be integer");
-        }
-        memory.add3AddressCode(Operation.ADD, s1, s2, temp);
+        List<Address> addresses = getOperandAddresses();
+        memory.add3AddressCode(Operation.ADD, addresses.get(0), addresses.get(1), temp);
         ss.push(temp);
     }
 
-    public void sub() {
-        Address temp = new Address(memory.getTemp(), varType.Int);
+    private List<Address> getOperandAddresses() {
         Address s2 = ss.pop();
         Address s1 = ss.pop();
         if (s1.varType != varType.Int || s2.varType != varType.Int) {
             ErrorHandler.printError("In sub two operands must be integer");
         }
-        memory.add3AddressCode(Operation.SUB, s1, s2, temp);
+        List<Address> addresses = new ArrayList<>();
+        addresses.add(s1);
+        addresses.add(s2);
+        return addresses;
+    }
+
+    public void sub() {
+        Address temp = new Address(memory.getTemp(), varType.Int);
+        List<Address> addresses = getOperandAddresses();
+        memory.add3AddressCode(Operation.SUB, addresses.get(0), addresses.get(1), temp);
         ss.push(temp);
     }
 
     public void mult() {
         Address temp = new Address(memory.getTemp(), varType.Int);
-        Address s2 = ss.pop();
-        Address s1 = ss.pop();
-        if (s1.varType != varType.Int || s2.varType != varType.Int) {
-            ErrorHandler.printError("In mult two operands must be integer");
-        }
-        memory.add3AddressCode(Operation.MULT, s1, s2, temp);
+        List<Address> addresses = getOperandAddresses();
+        memory.add3AddressCode(Operation.MULT, addresses.get(0), addresses.get(1), temp);
 //        memory.saveMemory();
         ss.push(temp);
     }
