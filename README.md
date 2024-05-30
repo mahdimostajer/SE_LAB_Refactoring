@@ -1,34 +1,52 @@
-# MiniJava
-Mini-Java is a subset of Java. MiniJava compiler implement a compiler for the Mini-java
-programming language.
+## گزارش آزمایش
 
-# Rules
+### استفاده از الگوی Facade برای CodeGenerator
+
+کلاس CodeGenerator توابع زیادی دارد که کار با آن را مشکل می‌کند. اما تنها دو تابع آن در بقیه پروژه مورد استفاده قرار گرفته است. می‌توانیم این دو تابع را در کلاس جداگانه‌ای با اسم CodeGeneratorFacade قرار دهیم. مطابق زیر:
+
+```java
+package codeGenerator;
+
+import scanner.token.Token;
+
+public class CodeGeneratorFacade {
+    private CodeGenerator codeGenerator;
+    public CodeGeneratorFacade() {
+        codeGenerator = new CodeGenerator();
+    }
+
+    public void semanticFunction(int func, Token next) {
+        codeGenerator.semanticFunction(func, next);
+    }
+
+    public void printMemory() {
+        codeGenerator.printMemory();
+    }
+}
+
 ```
-Goal --> Source EOF
-Source --> ClassDeclarations MainClass
-MainClass --> class Identifier { public static void main() { VarDeclarations Statements}}
-ClassDeclarations --> ClassDeclaration ClassDeclarations | lambda
-ClassDeclaration --> class Identifier Extension { FieldDeclarations MethodDeclarations }
-Extension --> extends Identifier | lambda
-FieldDeclarations --> FieldDeclaration FieldDeclarations | lambda
-FieldDeclaration --> static Type Identifier ;
-VarDeclarations --> VarDeclaration VarDeclarations | lambda
-VarDeclaration --> Type Identifier ;
-MethodDeclarations --> MethodDeclaration MethodDeclarations | lambda
-MethodDeclaration --> public static Type Identifier ( Parameters ) { VarDeclarations Statements return GenExpression ; }
-Parameters --> Type Identifier Parameter | lambda
-Parameter --> , Type Identifier Parameter | lambda
-Type --> boolean | int
-Statements --> Statements Statement | lambda
-Statement --> { Statements } | if ( GenExpression ) Statement else Statement | while ( GenExpression ) Statement | System.out.println ( GenExpression ) ; | Identifier = GenExpression ;
-GenExpression --> Expression | RelExpression
-Expression --> Expression + Term | Expression - Term | Term
-Term --> Term * Factor | Factor
-Factor --> ( Expression ) | Identifier | Identifier . Identifier | Identifier . Identifier ( Arguments ) | true | false | Integer
-RelExpression --> RelExpression && RelTerm | RelTerm
-RelTerm --> Expression == Expression | Expression < Expression
-Arguments --> GenExpression Argument | lambda
-Argument --> , GenExpression Argument | lambda
-Identifier --> <IDENTIFIER_LITERAL>
-Integer --> <INTEGER_LITERAL>
+
+### استفاده از الگوی Facade برای lexicalAnalyzer
+
+برای پنهان کردن پیچیدگی کلاس lexicalAnalyzer از الگوی Facade استفاده می‌کنیم و کلاس LexicalAnalyzerFacade را مطابق زیر تعریف می‌کنیم:
+
+
+```java
+package scanner;
+
+import scanner.token.Token;
+
+public class LexicalAnalyzerFacade {
+
+    private lexicalAnalyzer analyzer;
+    public LexicalAnalyzerFacade(java.util.Scanner sc) {
+        analyzer = new lexicalAnalyzer(sc);
+    }
+
+    public Token getNextToken() {
+        return analyzer.getNextToken();
+    }
+}
+
 ```
+
