@@ -10,6 +10,8 @@ import semantic.symbol.Symbol;
 import semantic.symbol.SymbolTable;
 import semantic.symbol.SymbolType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -167,15 +169,7 @@ public class CodeGenerator {
             try {
 
                 Symbol s = symbolTable.get(className, methodName, next.value);
-                varType t = varType.Int;
-                switch (s.type) {
-                    case Bool:
-                        t = varType.Bool;
-                        break;
-                    case Int:
-                        t = varType.Int;
-                        break;
-                }
+                varType t = getVarType(s.type);
                 ss.push(new Address(s.address, t));
 
 
@@ -190,20 +184,22 @@ public class CodeGenerator {
         symbolStack.push(next.value);
     }
 
+    private varType getVarType(SymbolType s) {
+        switch (s) {
+            case Bool:
+                return varType.Bool;
+            case Int:
+                return varType.Int;
+        }
+        return varType.Int;
+    }
+
     public void fpid() {
         ss.pop();
         ss.pop();
 
         Symbol s = symbolTable.get(symbolStack.pop(), symbolStack.pop());
-        varType t = varType.Int;
-        switch (s.type) {
-            case Bool:
-                t = varType.Bool;
-                break;
-            case Int:
-                t = varType.Int;
-                break;
-        }
+        varType t = getVarType(s.type);
         ss.push(new Address(s.address, t));
 
     }
@@ -238,15 +234,8 @@ public class CodeGenerator {
             ErrorHandler.printError("The few argument pass for method");
         } catch (IndexOutOfBoundsException e) {
         }
-        varType t = varType.Int;
-        switch (symbolTable.getMethodReturnType(className, methodName)) {
-            case Int:
-                t = varType.Int;
-                break;
-            case Bool:
-                t = varType.Bool;
-                break;
-        }
+        varType t = getVarType(symbolTable.getMethodReturnType(className, methodName));
+
         Address temp = new Address(memory.getTemp(), t);
         ss.push(temp);
         memory.add3AddressCode(Operation.ASSIGN, new Address(temp.num, varType.Address, new Imidiate()), new Address(symbolTable.getMethodReturnAddress(className, methodName), varType.Address), null);
@@ -263,15 +252,8 @@ public class CodeGenerator {
 //        String className = symbolStack.pop();
         try {
             Symbol s = symbolTable.getNextParam(callStack.peek(), methodName);
-            varType t = varType.Int;
-            switch (s.type) {
-                case Bool:
-                    t = varType.Bool;
-                    break;
-                case Int:
-                    t = varType.Int;
-                    break;
-            }
+            varType t = getVarType(s.type);
+
             Address param = ss.pop();
             if (param.varType != t) {
                 ErrorHandler.printError("The argument type isn't match");
@@ -303,35 +285,34 @@ public class CodeGenerator {
 
     public void add() {
         Address temp = new Address(memory.getTemp(), varType.Int);
-        Address s2 = ss.pop();
-        Address s1 = ss.pop();
-
-        if (s1.varType != varType.Int || s2.varType != varType.Int) {
-            ErrorHandler.printError("In add two operands must be integer");
-        }
-        memory.add3AddressCode(Operation.ADD, s1, s2, temp);
+        List<Address> addresses = getOperandAddresses();
+        memory.add3AddressCode(Operation.ADD, addresses.get(0), addresses.get(1), temp);
         ss.push(temp);
     }
 
-    public void sub() {
-        Address temp = new Address(memory.getTemp(), varType.Int);
+    private List<Address> getOperandAddresses() {
         Address s2 = ss.pop();
         Address s1 = ss.pop();
         if (s1.varType != varType.Int || s2.varType != varType.Int) {
             ErrorHandler.printError("In sub two operands must be integer");
         }
-        memory.add3AddressCode(Operation.SUB, s1, s2, temp);
+        List<Address> addresses = new ArrayList<>();
+        addresses.add(s1);
+        addresses.add(s2);
+        return addresses;
+    }
+
+    public void sub() {
+        Address temp = new Address(memory.getTemp(), varType.Int);
+        List<Address> addresses = getOperandAddresses();
+        memory.add3AddressCode(Operation.SUB, addresses.get(0), addresses.get(1), temp);
         ss.push(temp);
     }
 
     public void mult() {
         Address temp = new Address(memory.getTemp(), varType.Int);
-        Address s2 = ss.pop();
-        Address s1 = ss.pop();
-        if (s1.varType != varType.Int || s2.varType != varType.Int) {
-            ErrorHandler.printError("In mult two operands must be integer");
-        }
-        memory.add3AddressCode(Operation.MULT, s1, s2, temp);
+        List<Address> addresses = getOperandAddresses();
+        memory.add3AddressCode(Operation.MULT, addresses.get(0), addresses.get(1), temp);
 //        memory.saveMemory();
         ss.push(temp);
     }
@@ -456,13 +437,8 @@ public class CodeGenerator {
         String methodName = symbolStack.pop();
         Address s = ss.pop();
         SymbolType t = symbolTable.getMethodReturnType(symbolStack.peek(), methodName);
-        varType temp = varType.Int;
-        switch (t) {
-            case Int:
-                break;
-            case Bool:
-                temp = varType.Bool;
-        }
+        varType temp = getVarType(t);
+
         if (s.varType != temp) {
             ErrorHandler.printError("The type of method and return address was not match");
         }
