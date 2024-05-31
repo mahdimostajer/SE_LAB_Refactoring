@@ -4,7 +4,7 @@
 
 ## استفاده از Polymorphism به جای شرط
 
-پیاده سازی عملکرد type های مختلف کلاس Address با استفاده از switch پیاده سازی شده است. بهتر است آنرا با polymorphism جایگزین کنیم.
+عملکرد type های مختلف کلاس Address با استفاده از switch پیاده سازی شده است. بهتر است آنرا با polymorphism جایگزین کنیم.
 
 ```java
 public interface TypeAddress {
@@ -32,7 +32,7 @@ public class Direct implements TypeAddress{
 ```
 
 ## استفاده از  Separate Query From Modifier
-کلاس Memory شامل که هم مقدار متغیرهای داخلی کلاس را تغییر می‌دهند و هم آنرا مقدار آنرا باز می‌گردانند. بهتر است این موارد را از هم جدا کنیم:
+کلاس Memory شامل توابعی است که هم مقدار متغیرهای داخلی کلاس را تغییر می‌دهند و هم مقدار آنرا باز می‌گردانند. بهتر است این موارد را از هم جدا کنیم:
 
 ```java
 private int getLastTempIndex() {
@@ -130,44 +130,44 @@ private List<Address> getOperandAddresses() {
 
 ## استفاده از Replace Nested Conditional with Guard Clauses
 
-از این روش می‌توان برای حذف شرط‌های تو در تو استفاده کرد. هر کدام از حالت‌های خاص را در یک clause جداگانه قرار می‌دهیم. دو نمونه از کاربرد این روش:
+از این روش می‌توان برای حذف شرط‌های تو در تو استفاده کرد تا دنبال کردن جریان اجرای کد آسان شود. هر کدام از حالت‌های خاص را در یک clause جداگانه قرار می‌دهیم. دو نمونه از کاربرد این روش:
 
 ```java
 for (Type t : Type.values()) {
-    if(matcher.group(t.name()) == null) {
+        if(matcher.group(t.name()) == null) {
         continue;
-    }
-    if (matcher.group(Type.COMMENT.name()) != null) {
+        }
+        if (matcher.group(Type.COMMENT.name()) != null) {
         break;
-    }
-    if (matcher.group(Type.ErrorID.name()) != null) {
+        }
+        if (matcher.group(Type.ErrorID.name()) != null) {
         ErrorHandler.printError("The id must start with character");
         break;
-    }
-    return new Token(t, matcher.group(t.name()));
-}
+        }
+        return new Token(t, matcher.group(t.name()));
+        }
 ```
 
 ```java
 for (int j = 1; j < cols.length; j++) {
-    if(cols[j].isEmpty()) {
+        if(cols[j].isEmpty()) {
         continue;
-    }
-    if (cols[j].equals("acc")) {
+        }
+        if (cols[j].equals("acc")) {
         actionTable.get(actionTable.size() - 1).put(terminals.get(j), new Action(act.accept, 0));
         continue;
-    }
-    if (terminals.containsKey(j)) {
+        }
+        if (terminals.containsKey(j)) {
         Token t = terminals.get(j);
         Action a = new Action(cols[j].charAt(0) == 'r' ? act.reduce : act.shift, Integer.parseInt(cols[j].substring(1)));
         actionTable.get(actionTable.size() - 1).put(t, a);
         continue;
-    }
-    if (nonTerminals.containsKey(j)) {
+        }
+        if (nonTerminals.containsKey(j)) {
         gotoTable.get(gotoTable.size() - 1).put(nonTerminals.get(j), Integer.parseInt(cols[j]));
         continue;
-    }
+        }
 
-    throw new Exception();
-}
+        throw new Exception();
+        }
 ```
