@@ -134,40 +134,40 @@ private List<Address> getOperandAddresses() {
 
 ```java
 for (Type t : Type.values()) {
-        if(matcher.group(t.name()) == null) {
-        continue;
-        }
-        if (matcher.group(Type.COMMENT.name()) != null) {
-        break;
-        }
-        if (matcher.group(Type.ErrorID.name()) != null) {
-        ErrorHandler.printError("The id must start with character");
-        break;
-        }
-        return new Token(t, matcher.group(t.name()));
-        }
+    if(matcher.group(t.name()) == null) {
+    continue;
+    }
+    if (matcher.group(Type.COMMENT.name()) != null) {
+    break;
+    }
+    if (matcher.group(Type.ErrorID.name()) != null) {
+    ErrorHandler.printError("The id must start with character");
+    break;
+    }
+    return new Token(t, matcher.group(t.name()));
+}
 ```
 
 ```java
 for (int j = 1; j < cols.length; j++) {
-        if(cols[j].isEmpty()) {
-        continue;
-        }
-        if (cols[j].equals("acc")) {
-        actionTable.get(actionTable.size() - 1).put(terminals.get(j), new Action(act.accept, 0));
-        continue;
-        }
-        if (terminals.containsKey(j)) {
-        Token t = terminals.get(j);
-        Action a = new Action(cols[j].charAt(0) == 'r' ? act.reduce : act.shift, Integer.parseInt(cols[j].substring(1)));
-        actionTable.get(actionTable.size() - 1).put(t, a);
-        continue;
-        }
-        if (nonTerminals.containsKey(j)) {
-        gotoTable.get(gotoTable.size() - 1).put(nonTerminals.get(j), Integer.parseInt(cols[j]));
-        continue;
-        }
+    if(cols[j].isEmpty()) {
+    continue;
+    }
+    if (cols[j].equals("acc")) {
+    actionTable.get(actionTable.size() - 1).put(terminals.get(j), new Action(act.accept, 0));
+    continue;
+    }
+    if (terminals.containsKey(j)) {
+    Token t = terminals.get(j);
+    Action a = new Action(cols[j].charAt(0) == 'r' ? act.reduce : act.shift, Integer.parseInt(cols[j].substring(1)));
+    actionTable.get(actionTable.size() - 1).put(t, a);
+    continue;
+    }
+    if (nonTerminals.containsKey(j)) {
+    gotoTable.get(gotoTable.size() - 1).put(nonTerminals.get(j), Integer.parseInt(cols[j]));
+    continue;
+    }
 
-        throw new Exception();
-        }
+    throw new Exception();
+}
 ```
